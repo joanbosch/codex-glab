@@ -1,0 +1,6 @@
+*
+!Dockerfile
+!entrypoint.sh
+!app/
+!app/**
+**/__pycache__

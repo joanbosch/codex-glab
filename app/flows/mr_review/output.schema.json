@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["summary", "general_feedback", "findings", "decision", "decision_reason"],
+  "properties": {
+    "decision": {"type": "string", "enum": ["approve", "unapprove", "abstain"]},
+    "decision_reason": {"type": "string"},
+    "summary": {"type": "string"},
+    "general_feedback": {"type": "string"},
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "side", "line", "severity", "body", "suggestion"],
+        "properties": {
+          "path": {"type": "string"},
+          "side": {"type": "string", "enum": ["old", "new"]},
+          "line": {"type": "integer", "minimum": 1},
+          "severity": {"type": "string", "enum": ["critical", "high", "medium", "low"]},
+          "body": {"type": "string"},
+          "suggestion": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}

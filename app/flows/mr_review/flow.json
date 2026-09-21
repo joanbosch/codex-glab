@@ -1,0 +1,6 @@
+{
+  "name": "mr-review",
+  "description": "Review a merge request, publish feedback and approve only when quality and CI checks pass",
+  "sandbox": "read-only",
+  "required_env": ["CODEX_ACCESS_TOKEN", "PROJECT_URL", "MERGE_REQUEST_IID"]
+}
