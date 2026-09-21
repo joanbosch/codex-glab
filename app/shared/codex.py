@@ -15,5 +15,10 @@ def execute(*, repo, prompt, schema, output, sandbox="read-only"):
             "--output-schema", str(schema), "--output-last-message", str(output), "-"]
     if os.environ.get("CODEX_MODEL"):
         args[2:2] = ["--model", os.environ["CODEX_MODEL"]]
+    effort = os.environ.get("CODEX_REASONING_EFFORT")
+    if effort:
+        if effort not in ("none", "minimal", "low", "medium", "high", "xhigh", "max", "ultra"):
+            raise ValueError("Invalid CODEX_REASONING_EFFORT")
+        args[2:2] = ["--config", "model_reasoning_effort=" + json.dumps(effort)]
     process.run(args, cwd=repo, env=environment(), input=prompt)
     return json.loads(output.read_text())

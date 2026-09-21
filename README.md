@@ -60,12 +60,28 @@ Feedback is written in English unless additional instructions request otherwise.
 | `GITLAB_AUTH_TOKEN` | Alternative | Alias for `GITLAB_TOKEN`; the latter takes precedence. |
 | `GITLAB_HOST` | No | GitLab hostname, default `gitlab.com`. |
 | `GITLAB_INSTANCE_URL` | No | HTTPS instance URL; takes precedence over `GITLAB_HOST`. |
-| `PROJECT_URL` | Yes | HTTPS URL of the MR's target project, optionally ending in `.git`. |
+| `PROJECT_URL` | Yes | Project URL (HTTPS, HTTP or SSH), SCP-style Git address, or `group/project` path; optional `.git` suffix. Only the project path is used: API calls and HTTPS cloning use the configured GitLab host, even if the supplied URL names another host. |
 | `MERGE_REQUEST_IID` | For `mr-review` | Positive project-local merge request number. |
 | `ADDITIONAL_INSTRUCTIONS` | No | Additional review focus or project-specific promotion criteria. |
 | `ADDITIONAL_COMMENTS` | Alternative | Used if `ADDITIONAL_INSTRUCTIONS` is unset. |
 | `CODEX_MODEL` | No | Model available to the authenticated account; otherwise Codex's default. |
+| `CODEX_REASONING_EFFORT` | No | Explicit reasoning effort supported by the chosen model, such as `medium`; otherwise Codex's default. |
 | `DRY_RUN` | No | `true` or `false`; defaults to `false`. |
+
+To select GPT-5.6 Terra with medium reasoning, export both variables and pass
+them to the container:
+
+```bash
+export CODEX_MODEL=gpt-5.6-terra
+export CODEX_REASONING_EFFORT=medium
+# Add these arguments to docker run:
+# -e CODEX_MODEL -e CODEX_REASONING_EFFORT
+```
+
+The runner passes these as `--model gpt-5.6-terra` and
+`--config 'model_reasoning_effort="medium"'`. Model availability is determined by
+the authenticated account. Environment-variable support requires an image built
+from a revision containing this feature.
 
 Use a dedicated GitLab bot account where possible. Unapproval removes the
 approval of the account represented by the token: using your personal token can

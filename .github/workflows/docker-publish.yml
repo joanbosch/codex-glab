@@ -24,6 +24,7 @@ jobs:
         run: |
           bash -n entrypoint.sh
           python3 -m compileall -q app
+          python3 -m unittest discover -s tests
           python3 app/cli.py --list
       - name: Image name
         id: image
