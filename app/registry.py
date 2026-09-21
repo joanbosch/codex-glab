@@ -29,7 +29,7 @@ def discover(root=FLOW_ROOT):
         name = data["name"]
         if not isinstance(name, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", name) or name in result:
             raise ValueError(f"Invalid or duplicate flow name: {name}")
-        if data["sandbox"] not in ("read-only", "workspace-write"):
+        if data["sandbox"] not in ("read-only", "workspace-write", "danger-full-access"):
             raise ValueError(f"Unsupported sandbox for {name}")
         if not isinstance(data["required_env"], list) or not all(
                 isinstance(key, str) and re.fullmatch(r"[A-Z][A-Z0-9_]*", key) for key in data["required_env"]):

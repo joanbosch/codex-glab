@@ -99,7 +99,8 @@ to `0.144.4`; update `CODEX_VERSION` if token creation specifies a newer minimum
    discussions, diffs and head-pipeline job metadata with pagination.
 2. Clone the target project, fetch the MR reference and check out its captured
    head commit. Full history supports review against the merge base and fork MRs.
-3. Run Codex with a read-only sandbox and a structured JSON response schema.
+3. Run Codex with full access (`danger-full-access`), no approval prompts
+   (`approval_policy="never"`), and a structured JSON response schema.
    The Codex process is not given GitLab credentials. Its instructions prohibit
    running repository scripts/tests, installing dependencies and remote actions.
 4. Validate all findings against added or removed diff lines, including renamed
@@ -152,9 +153,13 @@ approval does not replace other required approvers or certify production readine
   relies on the model reading existing discussions.
 - **GitLab diff limits apply.** Explicitly collapsed or oversized diffs abort
   the review. Binary changes cannot receive inline findings.
-- **Sandbox compatibility needs a runtime check.** A successful build or
-  `codex --version` does not prove the worker supports the Linux sandbox. Run a
-  real dry review on the target worker. Do not silently disable the sandbox.
+- **MR reviews run with full access.** `mr-review` uses `danger-full-access`
+  and `approval_policy="never"`. Codex can access files and the network within
+  the container's permissions, without its own filesystem sandbox or approval
+  prompts. This flow does not invoke the Bubblewrap preflight and does not
+  require unprivileged user namespaces. Container-level restrictions still apply.
+  Other flows using `read-only` or `workspace-write` retain the Bubblewrap
+  prerequisite check before calling the model.
 - **Logs contain private code and feedback.** Restrict runner logs accordingly.
   Configure a job timeout and resource limits in the container runner.
 
@@ -210,7 +215,7 @@ output.schema.json
 ```
 
 `flow.json` declares a unique command name, description, `required_env` list and
-`sandbox` (`read-only` or `workspace-write`). The runner exports `main(spec)` and
+`sandbox` (`read-only`, `workspace-write` or `danger-full-access`). The runner exports `main(spec)` and
 uses `spec.directory` for assets and `spec.sandbox` when calling
 `shared.codex.execute`. Common GitLab transport, configuration, repository and
 Codex helpers live in `app/shared/`.

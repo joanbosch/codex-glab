@@ -11,7 +11,7 @@ def api(host, endpoint, payload=None, *, method=None):
     elif payload is not None:
         args += ["--method", "POST"]
     if payload is not None:
-        args += ["--input", "-"]
+        args += ["--header", "Content-Type: application/json", "--input", "-"]
     result = process.run(args, input=json.dumps(payload) if payload is not None else None,
                          stdout=subprocess.PIPE)
     return json.loads(result.stdout) if result.stdout.strip() else None
